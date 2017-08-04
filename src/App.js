@@ -3,6 +3,8 @@ import { Route } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 import * as BooksAPI from './BooksAPI'
 import './App.css'
+import escapeRegExp from 'escape-string-regexp'
+import sortBy from 'sort-by'
 
 class BooksApp extends React.Component {
   state = {
@@ -20,8 +22,26 @@ class BooksApp extends React.Component {
       this.setState({books})
     })
   }
+  updateQuery = (query) => {
+    this.setState({ query: query.trim() })
+  }
+
+  clearQuery = () => {
+    this.setState({ query: '' })
+  }
+ 
+
   render() {
-    const { books } = this.state
+    const { books, query } = this.state
+    let showingBooks
+    if (query) {
+      const match = new RegExp(escapeRegExp(query), 'i')
+      showingBooks = books.filter((book) => match.test(book.title))
+    } else {
+      showingBooks = books
+    }
+
+  showingBooks.sort(sortBy('title'))
     return (
       <div className="app">
           <Route exact path="/search" render={() => (
@@ -37,14 +57,19 @@ class BooksApp extends React.Component {
                       However, remember that the BooksAPI.search method DOES search by title or author. So, don't worry if
                       you don't find a specific author or title. Every search is limited by search terms.
                     */}
-                    <input type="text" placeholder="Search by title or author"/>
+
+                    <input 
+                      type="text" 
+                      placeholder="Search by title or author"
+                      value={query}
+                      onChange={(event) => this.updateQuery(event.target.value)}/>
                     
                   </div>
                 </div>
                 <div className="search-books-results">
                   <ol className="books-grid">
-                     {console.log(books)}
-                     {books.map((book) => (
+                     
+                     {showingBooks.length !== books.length && ( showingBooks.map((book) => (
 
                       <li key={book.id} >
                         <div className="book">
@@ -64,7 +89,7 @@ class BooksApp extends React.Component {
                           <div className="book-authors">{book.authors}</div>
                         </div>
                       </li>
-                    ))}
+                    )))}
                   </ol>
                 </div>
               </div>
