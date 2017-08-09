@@ -24,18 +24,17 @@ class BooksApp extends React.Component {
     this.setState({ query: query.trim() })
 
     BooksAPI.search(query,10).then((results) => {
-      console.log(results)
       this.setState({"bookResults": results})
     })
   }
   onResultsShelfChange = (book, shelf) => {
-  BooksAPI.update(book, shelf).then(
-      this.setState((state) => ({
+      BooksAPI.update(book, shelf).then(
+        this.setState((state) => ({
         bookResults: state.bookResults.filter((b) => b.id !== book.id).concat([book])
-      })))
-  BooksAPI.getAll().then((books) =>  {
+      }))).BooksAPI.getAll().then((books) =>  {
         this.setState("bookResults": books)
       })
+  
   }
   onBookShelfChange = (book, shelf) => {
      BooksAPI.update(book, shelf).then(
@@ -59,7 +58,7 @@ class BooksApp extends React.Component {
           <Route exact path="/search" render={() => (
               <div className="search-books">
                 <div className="search-books-bar">
-                  <a className="close-search" onClick={() => this.setState({ showSearchPage: false })}>Close</a>
+                  <Link className="close-search" to="/">Close</Link>
                   <div className="search-books-input-wrapper">
                   
                     <input 
