@@ -29,21 +29,17 @@ class BooksApp extends React.Component {
   }
   onResultsShelfChange = (book, shelf) => {
       BooksAPI.update(book, shelf).then(
-        this.setState((state) => ({
-        bookResults: state.bookResults.filter((b) => b.id !== book.id).concat([book])
-      }))).BooksAPI.getAll().then((books) =>  {
-        this.setState("bookResults": books)
-      })
-  
+        BooksAPI.getAll().then((bookResults) =>  {
+          this.setState({bookResults})
+        })
+      )
   }
   onBookShelfChange = (book, shelf) => {
      BooksAPI.update(book, shelf).then(
         BooksAPI.getAll().then((books) =>  {
           this.setState({books})
         })
-      )
-  
-     
+      )   
   }
   clearQuery = () => {
     this.setState({ query: '' })
